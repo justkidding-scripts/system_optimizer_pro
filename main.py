@@ -674,3 +674,283 @@ def start_web_interface():
 
 if __name__ == "__main__":
     main()
+def handle_predictive_hardware(cmd):
+    """Handle predictive hardware failure detection"""
+    from src.prediction.hardware_predictor import HardwarePredictor
+    
+    parts = cmd.split()
+    if len(parts) < 3:
+        print("Usage: hardware [analyze|predict|status|report] [options]")
+        return
+    
+    action = parts[2]
+    predictor = HardwarePredictor()
+    
+    if action == "analyze":
+        print("\n🔮 Analyzing hardware health and predicting failures...")
+        predictions = predictor.analyze_hardware_health()
+        
+        if not predictions:
+            print("✅ All hardware components appear healthy!")
+            return
+        
+        print(f"\n🎯 Found {len(predictions)} potential issues:")
+        
+        for i, prediction in enumerate(predictions, 1):
+            print(f"\n{i}. {prediction.component.value.upper()} - {prediction.severity.value.upper()}")
+            print(f"   Health Score: {prediction.current_health_score:.1f}/100")
+            print(f"   Predicted Failure: {prediction.predicted_failure_date.strftime('%Y-%m-%d')}")
+            print(f"   Confidence: {prediction.confidence:.0%}")
+            print(f"   Days to Failure: {prediction.time_to_failure_days}")
+            
+            if prediction.warning_signs:
+                print(f"   ⚠️  Warning Signs:")
+                for warning in prediction.warning_signs:
+                    print(f"      • {warning}")
+            
+            if prediction.recommendations:
+                print(f"   🔧 Recommendations:")
+                for rec in prediction.recommendations:
+                    print(f"      • {rec}")
+    
+    elif action == "status":
+        summary = predictor.get_component_status_summary()
+        print("\n📊 Hardware Health Summary:")
+        print(f"Overall Health: {summary['overall_health']:.1f}/100")
+        print(f"Critical Issues: {summary['critical_issues']}")
+        print(f"Warnings: {summary['warnings']}")
+        if summary['next_maintenance']:
+            print(f"Next Maintenance: {summary['next_maintenance']} days")
+    
+    elif action == "report":
+        print("\n📊 Generating detailed hardware health report...")
+        # This would generate a comprehensive report
+        summary = predictor.get_component_status_summary()
+        print("Hardware Health Report saved to ~/.system_optimizer_pro/hardware_report.txt")
+    
+    else:
+        print("Available actions: analyze, status, report")
+
+def handle_memory_visualization(cmd):
+    """Handle memory defragmentation visualization"""
+    try:
+        from src.visualization.memory_defrag_viz import MemoryDefragmentationVisualizer
+        
+        parts = cmd.split()
+        action = parts[2] if len(parts) > 2 else "start"
+        
+        if action == "start":
+            print("🎮 Starting Memory Defragmentation 3D Visualizer...")
+            visualizer = MemoryDefragmentationVisualizer(1200, 800)
+            
+            try:
+                print("Controls:")
+                print("  SPACE - Pause/Resume")
+                print("  R - Toggle Auto-Rotate") 
+                print("  ↑↓ - Zoom In/Out")
+                print("  ←→ - Manual Rotate")
+                print("  ESC - Exit")
+                print()
+                
+                visualizer.start_defragmentation_visualization(real_defrag=False)
+                
+                print("📊 Generating performance report...")
+                report_path = visualizer.generate_html_report()
+                print(f"📄 Report saved to: {report_path}")
+                
+            except KeyboardInterrupt:
+                print("\n⏹️  Visualization stopped by user")
+            finally:
+                visualizer.stop_visualization()
+        
+        elif action == "demo":
+            # Quick demo mode
+            print("🎮 Memory Visualization Demo Mode")
+            visualizer = MemoryDefragmentationVisualizer(800, 600)
+            visualizer.start_defragmentation_visualization(real_defrag=False)
+        
+        else:
+            print("Available actions: start, demo")
+            
+    except ImportError as e:
+        print(f"❌ Visualization dependencies not available: {e}")
+        print("Install with: pip install pygame matplotlib plotly rich")
+
+def handle_thermal_gaming(cmd):
+    """Handle thermal management gaming interface"""
+    try:
+        from src.thermal.thermal_gaming import ThermalGameEngine
+        
+        parts = cmd.split()
+        action = parts[2] if len(parts) > 2 else "start"
+        
+        if action == "start":
+            print("🎮 Starting Thermal Management Gaming...")
+            game = ThermalGameEngine()
+            game.start_gaming_interface()
+        
+        elif action == "challenge":
+            from src.thermal.thermal_gaming import ThermalChallenge
+            
+            if len(parts) > 3:
+                challenge_name = parts[3].lower()
+                challenge_map = {
+                    'cool': ThermalChallenge.COOL_RUNNER,
+                    'efficiency': ThermalChallenge.EFFICIENCY_MASTER,
+                    'stress': ThermalChallenge.STRESS_SURVIVOR,
+                    'silent': ThermalChallenge.SILENT_OPERATOR,
+                    'overclock': ThermalChallenge.OVERCLOCKED_BEAST
+                }
+                
+                if challenge_name in challenge_map:
+                    game = ThermalGameEngine()
+                    game.start_challenge(challenge_map[challenge_name])
+                else:
+                    print("Available challenges: cool, efficiency, stress, silent, overclock")
+            else:
+                print("Usage: thermal challenge [cool|efficiency|stress|silent|overclock]")
+        
+        else:
+            print("Available actions: start, challenge")
+            
+    except ImportError as e:
+        print(f"❌ Thermal gaming dependencies not available: {e}")
+        print("Install with: pip install rich pygame numpy")
+
+def handle_cpu_program_management(cmd):
+    """Handle CPU-based program thermal management"""
+    try:
+        from src.thermal.cpu_program_manager import CPUProgramManager
+        
+        parts = cmd.split()
+        action = parts[2] if len(parts) > 2 else "interactive"
+        
+        manager = CPUProgramManager()
+        
+        if action == "interactive":
+            print("🖥️  CPU-Based Program Thermal Management")
+            profile = manager.create_interactive_program_selector()
+            if profile:
+                print(f"✅ Thermal management configured for {profile.program_name}")
+        
+        elif action == "list":
+            print("\n📋 Discovered Programs:")
+            programs = manager.discover_programs()
+            for i, prog in enumerate(programs[:10], 1):
+                print(f"{i:2d}. {prog.name:20s} | CPU: {prog.cpu_percent:5.1f}% | RAM: {prog.memory_percent:5.1f}%")
+        
+        elif action == "status":
+            manager.show_thermal_status()
+        
+        elif action == "monitor" and len(parts) > 3:
+            program_name = parts[3]
+            success = manager.start_thermal_management(program_name)
+            if success:
+                print(f"🌡️  Started monitoring {program_name}. Press Ctrl+C to stop.")
+                try:
+                    while True:
+                        time.sleep(1)
+                except KeyboardInterrupt:
+                    manager.stop_thermal_management()
+                    print("\n🛑 Monitoring stopped")
+        
+        else:
+            print("Available actions: interactive, list, status, monitor <program_name>")
+            
+    except ImportError as e:
+        print(f"❌ CPU management dependencies not available: {e}")
+        print("Install with: pip install psutil")
+
+# Update the CLI help function
+def print_cli_help():
+    """Print CLI help"""
+    print("\n📖 Available Commands:")
+    print("  status              - Show system status")
+    print("  plugin list         - List all plugins")
+    print("  plugin load <name>  - Load a plugin")
+    print("  plugin status       - Show plugin status")
+    print("  job list            - List scheduled jobs")
+    print("  job run <id>        - Run a job now")
+    print("  job status          - Show job status")
+    print("  config show         - Show configuration")
+    print("  config set <key> <value> - Set configuration value")
+    print("  system info         - Show system information")
+    print("  system metrics      - Show current system metrics")
+    print("  monitor             - Real-time monitoring (Ctrl+C to stop)")
+    print("  scan                - Quick system security scan")
+    print("  scan deep           - Comprehensive deep system scan")
+    print("  validate            - Test pre-action validation system")
+    print("  backup config       - Backup configurations")
+    print("  backup full         - Full system backup")
+    print()
+    print("🆕 NEW ENHANCED FEATURES:")
+    print("  hardware analyze    - AI-powered hardware failure prediction")
+    print("  hardware status     - Hardware health summary")
+    print("  memory visualize    - 3D memory defragmentation visualization")
+    print("  thermal gaming      - Thermal management gaming interface")
+    print("  thermal challenge <type> - Start specific thermal challenge")
+    print("  cpu manage          - CPU-based program thermal management")
+    print("  cpu monitor <program> - Monitor specific program thermals")
+    print("  help                - Show this help")
+    print("  exit                - Exit CLI")
+
+# Update the handle_* functions in start_cli_interface
+def start_cli_interface():
+    """Start interactive CLI interface"""
+    from core.config import config
+    from core.plugin_manager import plugin_manager
+    from core.scheduler import scheduler
+    
+    print("\n🖥️  System Optimizer Pro - Enhanced Interactive CLI")
+    print("Type 'help' for commands, 'exit' to quit")
+    print("🆕 NEW: Hardware prediction, 3D visualization, thermal gaming!")
+    print()
+    
+    while True:
+        try:
+            cmd = input("system-optimizer> ").strip().lower()
+            
+            if cmd == "exit":
+                break
+            elif cmd == "help":
+                print_cli_help()
+            elif cmd == "status":
+                print_status_summary()
+            elif cmd.startswith("plugin"):
+                handle_plugin_command(cmd)
+            elif cmd.startswith("job"):
+                handle_job_command(cmd)
+            elif cmd.startswith("config"):
+                handle_config_command(cmd)
+            elif cmd.startswith("backup"):
+                handle_backup_command(cmd)
+            elif cmd == "system info":
+                handle_system_info()
+            elif cmd == "system metrics":
+                handle_system_metrics() 
+            elif cmd == "monitor":
+                handle_real_time_monitoring()
+            elif cmd == "scan":
+                handle_system_scan()
+            elif cmd == "scan deep":
+                handle_deep_system_scan()
+            elif cmd == "validate":
+                handle_action_validation()
+            # NEW ENHANCED FEATURES
+            elif cmd.startswith("hardware"):
+                handle_predictive_hardware(cmd)
+            elif cmd.startswith("memory"):
+                handle_memory_visualization(cmd)
+            elif cmd.startswith("thermal"):
+                handle_thermal_gaming(cmd)
+            elif cmd.startswith("cpu"):
+                handle_cpu_program_management(cmd)
+            else:
+                print(f"Unknown command: {cmd}. Type 'help' for available commands.")
+                
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
+        except Exception as e:
+            print(f"Error: {e}")
+

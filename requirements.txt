@@ -4,12 +4,28 @@ pyyaml>=6.0
 requests>=2.31.0
 psutil>=5.9.0
 
+# Enhanced monitoring and prediction
+numpy>=1.24.0
+matplotlib>=3.6.0
+plotly>=5.15.0
+scikit-learn>=1.3.0
+pandas>=2.0.0
+seaborn>=0.12.0
+
+# 3D visualization for memory defragmentation
+pyglet>=2.0.0
+moderngl>=5.8.0
+
+# Thermal monitoring and hardware sensors
+py-cpuinfo>=9.0.0
+
 # Web interface (optional)
 flask>=3.0.0
 fastapi>=0.100.0
 uvicorn[standard]>=0.23.0
 jinja2>=3.1.0
 werkzeug>=3.0.0
+websockets>=11.0.0
 
 # Development dependencies (optional)
 pytest>=7.0.0
@@ -20,3 +36,9 @@ mypy>=1.0.0
 
 # Monitoring (optional)
 prometheus-client>=0.17.0
+
+# Gaming-style interface
+pygame>=2.5.0
+arcade>=2.6.0
+rich>=13.4.0
+colorama>=0.4.6
